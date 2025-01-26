@@ -32,6 +32,7 @@ export default function ChannelList({
                   : "hover:bg-[var(--bg-hover)]"
               }
             `}
+            // 可能存在的拓展：对于频道的自定义
             onClick={() => onChannelSelect("music")}
           >
             <div className="flex items-center">

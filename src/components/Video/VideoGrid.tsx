@@ -14,10 +14,14 @@ interface Participant {
 }
 
 interface VideoGridProps {
-  participants: Participant[];
+  participants: any[];
+  localStream: MediaStream | null;
 }
 
-export default function VideoGrid({ participants }: VideoGridProps) {
+export default function VideoGrid({
+  participants,
+  localStream
+}: VideoGridProps) {
   // 获取开启视频的参与者
   const videoParticipants = useMemo(() => {
     return participants.filter((p) => p.isVideoEnabled);
@@ -64,6 +68,18 @@ export default function VideoGrid({ participants }: VideoGridProps) {
             ${gridLayout === "quad" ? "grid-cols-2 grid-rows-2" : ""}
           `}
         >
+          {/* 显示本地视频 */}
+          {localStream && (
+            <div className="relative bg-[var(--bg-tertiary)] rounded-lg overflow-hidden">
+              <VideoPlayer
+                stream={localStream}
+                muted={true} // 本地视频必须静音以防止回声
+              />
+              <div className="absolute bottom-2 left-2 text-sm bg-black/50 px-2 py-1 rounded">
+                我 (本地)
+              </div>
+            </div>
+          )}
           {videoParticipants.map((participant, index) => (
             <div
               key={participant.id}

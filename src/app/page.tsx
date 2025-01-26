@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import ChannelList from "@/components/ChannelList";
-import UserList from "@/components/UserList";
+import { useState, useCallback } from "react";
+import ChannelList from "@/components/ChannelList/index";
 import MainContent from "@/components/RoomPage/MainContent";
 
 export default function Home() {
@@ -34,6 +33,11 @@ export default function Home() {
     }
   ]);
 
+  // 处理退出频道
+  const handleLeaveChannel = useCallback(() => {
+    setActiveChannel(null);
+  }, []);
+
   return (
     <div className="flex h-screen w-screen overflow-hidden">
       {/* 左侧频道列表 */}
@@ -46,12 +50,10 @@ export default function Home() {
 
       {/* 中间主内容区 */}
       <div className="flex-1 h-full bg-[var(--bg-primary)]">
-        <MainContent activeChannel={activeChannel} />
-      </div>
-
-      {/* 右侧用户列表 */}
-      <div className="w-60 min-w-60 h-full bg-[var(--bg-secondary)] border-l border-[var(--border-color)]">
-        <UserList users={users} currentUserId="local" />
+        <MainContent
+          activeChannel={activeChannel}
+          onLeaveChannel={handleLeaveChannel}
+        />
       </div>
     </div>
   );

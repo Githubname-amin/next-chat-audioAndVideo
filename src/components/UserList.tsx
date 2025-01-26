@@ -1,19 +1,12 @@
 "use client";
 
-interface User {
-  id: string;
-  name: string;
-  status: "在线" | "离开";
-  isVideoEnabled: boolean;
-  isAudioEnabled: boolean;
-  isSpeaking: boolean;
-}
+import { User } from "@/types/user";
+import Image from "next/image";
 
 interface UserListProps {
   users: User[];
   currentUserId: string;
 }
-
 export default function UserList({ users = [], currentUserId }: UserListProps) {
   if (!Array.isArray(users)) {
     console.warn("UserList: users prop is not an array", users);
@@ -42,13 +35,26 @@ export default function UserList({ users = [], currentUserId }: UserListProps) {
             {/* 用户头像 */}
             <div className="relative">
               <div className="w-10 h-10 rounded-full bg-[var(--bg-primary)] flex items-center justify-center">
-                {user.name[0]}
+                <Image
+                  src={user?.avatar ?? "/images/default-avatar.png"}
+                  alt={user?.username ?? "Unknown User"}
+                  width={32}
+                  height={32}
+                  className="rounded-full"
+                  onError={(
+                    e: React.SyntheticEvent<HTMLImageElement, Event>
+                  ) => {
+                    // 图片加载失败时使用默认头像
+                    const target = e.target as HTMLImageElement;
+                    target.src = "/images/default-avatar.png";
+                  }}
+                />
               </div>
               {/* 在线状态指示器 */}
               <div
                 className={`
                 absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-[var(--bg-secondary)]
-                ${user.status === "在线" ? "bg-green-500" : "bg-gray-500"}
+                ${user.status === "online" ? "bg-green-500" : "bg-gray-500"}
               `}
               />
             </div>
@@ -57,11 +63,13 @@ export default function UserList({ users = [], currentUserId }: UserListProps) {
             <div className="ml-3 flex-1">
               <div className="flex items-center">
                 <span className="text-sm font-medium">
-                  {user.id === currentUserId ? `${user.name} (我)` : user.name}
+                  {user.id === currentUserId
+                    ? `${user.username} (我)`
+                    : user.username}
                 </span>
               </div>
               <div className="text-xs text-[var(--text-tertiary)]">
-                {user.status}
+                {user.username}
               </div>
             </div>
 
